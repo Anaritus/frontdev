@@ -73,8 +73,7 @@ const popupCardImage = document.querySelector(".popup__image");
 // @todo: Коллбеки
 
 function showPopup(popupWindow) {
-  popupWindow.style.visibility = "visible";
-  popupWindow.style.opacity = 1;
+  popupWindow.classList.add("popup_is-opened");
   document.addEventListener("keydown", closeWindow);
 }
 
@@ -108,8 +107,7 @@ function showAddNewCardPopup() {
 function closeWindow(evt) {
   if ((evt.key || "Escape") === "Escape") {
     popupElements.forEach((popup) => {
-      popupWindow.style.visibility = "hidden";
-      popupWindow.style.opacity = 0;
+      popup.classList.remove("popup_is-opened");
     });
     document.removeEventListener("keydown", closeWindow);
   }
