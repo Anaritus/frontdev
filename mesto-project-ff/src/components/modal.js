@@ -2,7 +2,7 @@ function escapeFromPopup(event) {
   if (event.key === "Escape") {
     closeModal(document.querySelector(".popup_is-opened"));
   }
-} // @todo: Вывести карточки на страницу
+}
 export function openModal(popup) {
   popup.classList.add("popup_is-opened");
   document.addEventListener("keydown", escapeFromPopup);

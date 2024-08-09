@@ -1,5 +1,3 @@
-// @todo: Темплейт карточки
-
 import { createCard, deleteCard, likeAdd } from "./components/card.js";
 import { initialCards } from "./components/cards.js";
 import {
@@ -16,7 +14,6 @@ const showImage = function (evt) {
   popupImage.alt = evt.target.alt;
   openModal(popupBigImage);
 };
-// @todo: DOM узлы
 const cardsContainer = document.querySelector(".places__list");
 initialCards.forEach(function (card) {
   cardsContainer.append(createCard(card, deleteCard, likeAdd, showImage));
@@ -29,7 +26,7 @@ const popupAddCard = document.querySelector(".popup_type_new-card");
 const popupBigImage = document.querySelector(".popup_type_image");
 export const profileTitle = document.querySelector(".profile__title");
 export const profileDescription = document.querySelector(
-  ".profile__description"
+  ".profile__description",
 );
 const newCardTitle = document.querySelector(".popup__input_type_card-name");
 const newCardLink = document.querySelector(".popup__input_type_url");

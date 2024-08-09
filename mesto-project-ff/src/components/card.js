@@ -17,7 +17,6 @@ export function createCard(card, onDelete, likeAdd, showImage) {
 export function likeAdd(event) {
   event.target.classList.toggle("card__like-button_is-active");
 }
-// @todo: Функция удаления карточки
 export function deleteCard(event) {
   event.target.closest(".places__item").remove();
 }
