@@ -6,6 +6,10 @@ import {
   closePopupByOverlay,
 } from "./components/modal.js";
 import "./styles/index.css";
+import {
+  enableValidation,
+  refreshValidationState,
+} from "./components/validation.js";
 export const cardTemplate = document.querySelector("#card-template").content;
 
 const showImage = function (evt) {
@@ -30,18 +34,28 @@ export const profileDescription = document.querySelector(
 );
 const newCardTitle = document.querySelector(".popup__input_type_card-name");
 const newCardLink = document.querySelector(".popup__input_type_url");
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
 
 addButton.addEventListener("click", function (event) {
   openModal(popupAddCard);
 });
+
 editButton.addEventListener("click", function (event) {
+  const inputTypeName = document.querySelector(".popup__input_type_name");
+  const inputTypeDescription = document.querySelector(
+    ".popup__input_type_description",
+  );
+  inputTypeName.value = profileTitle.textContent;
+  inputTypeDescription.value = profileDescription.textContent;
+  refreshValidationState(formEditElement, validationConfig);
   openModal(popupEdit);
-  document
-    .querySelector(".popup__input_type_name")
-    .setAttribute("value", profileTitle.textContent);
-  document
-    .querySelector(".popup__input_type_description")
-    .setAttribute("value", profileDescription.textContent);
 });
 
 const closeButtons = document.querySelectorAll(".popup__close");
@@ -69,14 +83,6 @@ function handleFormEditSubmit(evt) {
   evt.preventDefault();
   closeModal(evt.target.closest(".popup"));
 
-  // Эта строчка отменяет стандартную отправку формы.
-  // Так мы можем определить свою логику отправки.
-  // О том, как это делать, расскажем позже.
-
-  // Получите значение полей jobInput и nameInput из свойства value
-
-  // Выберите элементы, куда должны быть вставлены значения полей
-
   profileTitle.textContent = nameInput.value; // Вставьте новые значения с помощью textContent
   profileDescription.textContent = jobInput.value; // Вставьте новые значения с помощью textContent
   nameInput.value = "";
@@ -93,9 +99,12 @@ function handleFormSubmitAdd(evt) {
   cardsContainer.prepend(createCard(Newcard, deleteCard, likeAdd, showImage));
   newCardTitle.value = "";
   newCardLink.value = "";
+  refreshValidationState(formAdd, validationConfig);
 }
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
 const formAdd = document.querySelector(".popup_type_new-card .popup__form");
 formEditElement.addEventListener("submit", handleFormEditSubmit);
 formAdd.addEventListener("submit", handleFormSubmitAdd);
+
+enableValidation(validationConfig);

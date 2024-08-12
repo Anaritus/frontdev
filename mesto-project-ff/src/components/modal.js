@@ -3,6 +3,7 @@ function escapeFromPopup(event) {
     closeModal(document.querySelector(".popup_is-opened"));
   }
 }
+
 export function openModal(popup) {
   popup.classList.add("popup_is-opened");
   document.addEventListener("keydown", escapeFromPopup);
