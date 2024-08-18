@@ -1,10 +1,9 @@
-import { createCard, deleteCallback, likeToggle } from "./components/card.js";
+import { createCard, likeToggle } from "./components/card.js";
 import {
   closeModal,
   openModal,
   closePopupByOverlay,
 } from "./components/modal.js";
-import "./styles/index.css";
 import {
   enableValidation,
   refreshValidationState,
@@ -17,6 +16,7 @@ import {
   editAvatar,
   deleteCard,
 } from "./components/api.js";
+import "./styles/index.css";
 export const cardTemplate = document.querySelector("#card-template").content;
 
 const showImage = function (evt) {

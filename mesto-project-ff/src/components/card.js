@@ -40,12 +40,3 @@ export function likeToggle(event) {
     card.querySelector(".card__like-count").textContent = res.likes.length;
   });
 }
-
-export function deleteCallback(event) {
-  const cardElement = event.target.closest(".places__item");
-  deleteCard({
-    _id: cardElement.getAttribute("_id"),
-  }).then(() => {
-    cardElement.remove();
-  });
-}
