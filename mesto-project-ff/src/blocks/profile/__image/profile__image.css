@@ -7,6 +7,44 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.profile__avatar {
+  position: relative;
+  border-radius: 50%;
+}
+.profile__image-edit-button {
+  width: 26px;
+  height: 26px;
+  background: url("../../../images/avatar-edit.png") center no-repeat;
+  background-size: cover;
+  cursor: pointer;
+  border: none;
+  grid-area: button;
+  align-self: center;
+  left: calc((120px-26px) / 2);
+  top: calc((120px-26px) / 2);
+  position: absolute;
+  opacity: 0;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.profile__avatar:hover .profile__image {
+  opacity: 0.4;
+}
+
+.profile__avatar:hover .profile__image-edit-button {
+  opacity: 1;
 }
 
 @media screen and (max-width: 740px) {
