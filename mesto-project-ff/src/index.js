@@ -4,10 +4,7 @@ import {
   openModal,
   closePopupByOverlay,
 } from "./components/modal.js";
-import {
-  enableValidation,
-  refreshValidationState,
-} from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
 import {
   whoami,
   fetchCards,
@@ -43,7 +40,7 @@ const validationConfig = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
   submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
+  inactiveButtonClass: "popup__button_inactive",
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
@@ -102,7 +99,7 @@ editButton.addEventListener("click", function () {
   );
   inputTypeName.value = profileTitle.textContent;
   inputTypeDescription.value = profileDescription.textContent;
-  refreshValidationState(formEditElement, validationConfig);
+  clearValidation(formEditElement, validationConfig);
   openModal(popupEdit);
 });
 
@@ -123,12 +120,10 @@ popups.forEach(function (popup) {
   popup.addEventListener("click", closePopupByOverlay());
 });
 
-// Находим форму в DOM
 const formAdd = document.querySelector(".popup_type_new-card .popup__form");
 const formEditElement = document.querySelector(".popup_type_edit .popup__form"); // Воспользуйтесь методом querySelector()
 const formAvatar = document.querySelector(".popup_type_avatar .popup__form");
 const formDelete = document.querySelector(".popup_type_delete .popup__form");
-// Находим поля формы в DOM
 const nameInput = document.querySelector(".popup__input_type_name"); // Воспользуйтесь инструментом .querySelector()
 const jobInput = document.querySelector(".popup__input_type_description"); // Воспользуйтесь инструментом .querySelector()
 const newCardTitle = document.querySelector(".popup__input_type_card-name");
@@ -167,11 +162,10 @@ function handleFormSubmitAdd(evt) {
     closeModal(evt.target.closest(".popup"));
     renderLoading(evt, false);
   });
-  refreshValidationState(formAdd, validationConfig);
+  clearValidation(formAdd, validationConfig);
 }
 
 function handleFormSubmitAvatar(evt) {
-  console.log(evt.target);
   evt.preventDefault();
 
   const avatarConfig = {
@@ -207,8 +201,6 @@ function handleFormSubmitDelete(evt) {
   });
 }
 
-// Прикрепляем обработчик к форме:
-// он будет следить за событием “submit” - «отправка»
 formEditElement.addEventListener("submit", handleFormEditSubmit);
 formAdd.addEventListener("submit", handleFormSubmitAdd);
 formAvatar.addEventListener("submit", handleFormSubmitAvatar);
