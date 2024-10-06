@@ -60,17 +60,19 @@ function renderProfile(profile, config) {
 }
 
 function renderInitial(config) {
-  Promise.all([whoami(), fetchCards()]).then((ress) => {
-    const profile = ress[0];
-    renderProfile(profile, config);
-    const initialCards = ress[1];
-    initialCards.forEach(function (card) {
-      cardsContainer.append(
-        createCard(card, formDelete, likeToggle, showImage, profile._id),
-      );
-    });
-    document.querySelectorAll(".popup__button").forEach(resetButton);
-  });
+  Promise.all([whoami(), fetchCards()])
+    .then((ress) => {
+      const profile = ress[0];
+      renderProfile(profile, config);
+      const initialCards = ress[1];
+      initialCards.forEach(function (card) {
+        cardsContainer.append(
+          createCard(card, formDelete, likeToggle, showImage, profile._id),
+        );
+      });
+      document.querySelectorAll(".popup__button").forEach(resetButton);
+    })
+    .catch((err) => console.log(`Ошибка ${err.status}`));
 }
 
 function resetButton(button) {
@@ -137,13 +139,15 @@ function handleFormEditSubmit(evt) {
   updateProfile({
     name: nameInput.value,
     about: jobInput.value,
-  }).then((profile) => {
-    renderProfile(profile, profileConfig);
-    nameInput.value = "";
-    jobInput.value = "";
-    closeModal(evt.target.closest(".popup"));
-    renderLoading(evt, false);
-  });
+  })
+    .then((profile) => {
+      renderProfile(profile, profileConfig);
+      nameInput.value = "";
+      jobInput.value = "";
+      closeModal(evt.target.closest(".popup"));
+      renderLoading(evt, false);
+    })
+    .catch((err) => console.log(`Ошибка ${err}`));
 }
 
 function handleFormSubmitAdd(evt) {
@@ -153,15 +157,23 @@ function handleFormSubmitAdd(evt) {
     link: newCardLink.value,
   };
   renderLoading(evt, true);
-  postCard(newCard).then((newCard) => {
-    cardsContainer.prepend(
-      createCard(newCard, formDelete, likeToggle, showImage, newCard.owner._id),
-    );
-    newCardTitle.value = "";
-    newCardLink.value = "";
-    closeModal(evt.target.closest(".popup"));
-    renderLoading(evt, false);
-  });
+  postCard(newCard)
+    .then((newCard) => {
+      cardsContainer.prepend(
+        createCard(
+          newCard,
+          formDelete,
+          likeToggle,
+          showImage,
+          newCard.owner._id,
+        ),
+      );
+      newCardTitle.value = "";
+      newCardLink.value = "";
+      closeModal(evt.target.closest(".popup"));
+      renderLoading(evt, false);
+    })
+    .catch((err) => console.log(`Ошибка ${err}`));
   clearValidation(formAdd, validationConfig);
 }
 
@@ -172,12 +184,14 @@ function handleFormSubmitAvatar(evt) {
     avatar: avatarLink.value,
   };
   renderLoading(evt, true);
-  editAvatar(avatarConfig).then((profile) => {
-    renderProfile(profile, profileConfig);
-    avatarLink.value = "";
-    closeModal(evt.target.closest(".popup"));
-    renderLoading(evt, false);
-  });
+  editAvatar(avatarConfig)
+    .then((profile) => {
+      renderProfile(profile, profileConfig);
+      avatarLink.value = "";
+      closeModal(evt.target.closest(".popup"));
+      renderLoading(evt, false);
+    })
+    .catch((err) => console.log(`Ошибка ${err}`));
 }
 
 function find_card(_id) {
@@ -194,11 +208,13 @@ function handleFormSubmitDelete(evt) {
   renderLoading(evt, true);
   deleteCard({
     _id: cardElement.getAttribute("_id"),
-  }).then(() => {
-    cardElement.remove();
-    closeModal(evt.target.closest(".popup"));
-    renderLoading(evt, false);
-  });
+  })
+    .then(() => {
+      cardElement.remove();
+      closeModal(evt.target.closest(".popup"));
+      renderLoading(evt, false);
+    })
+    .catch((err) => console.log(`Ошибка ${err}`));
 }
 
 formEditElement.addEventListener("submit", handleFormEditSubmit);
