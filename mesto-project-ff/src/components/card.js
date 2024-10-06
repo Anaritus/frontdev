@@ -1,12 +1,13 @@
 import { cardTemplate } from "..";
-import { deleteCard, likeCard } from "./api";
+import { likeCard } from "./api";
 import { openModal } from "./modal";
 
 export function createCard(card, formDelete, likeAdd, showImage, profileId) {
   const cardElement = cardTemplate.cloneNode(true);
   cardElement.querySelector(".card__title").textContent = card.name;
-  cardElement.querySelector(".card__image").src = card.link;
-  cardElement.querySelector(".card__image").alt = card.name;
+  const imageArea = cardElement.querySelector(".card__image");
+  imageArea.src = card.link;
+  imageArea.alt = card.name;
   cardElement.querySelector(".card__like-count").textContent =
     card.likes.length;
   cardElement.querySelector(".places__item").setAttribute("_id", `${card._id}`);
@@ -23,7 +24,6 @@ export function createCard(card, formDelete, likeAdd, showImage, profileId) {
     likeButton.classList.add("card__like-button_is-active");
   }
   likeButton.addEventListener("click", likeAdd);
-  const imageArea = cardElement.querySelector(".card__image");
   imageArea.addEventListener("click", showImage);
 
   return cardElement;
@@ -35,8 +35,10 @@ export function likeToggle(event) {
     _id: card.getAttribute("_id"),
     add: !event.target.classList.contains("card__like-button_is-active"),
   };
-  likeCard(config).then((res) => {
-    event.target.classList.toggle("card__like-button_is-active");
-    card.querySelector(".card__like-count").textContent = res.likes.length;
-  });
+  likeCard(config)
+    .then((res) => {
+      event.target.classList.toggle("card__like-button_is-active");
+      card.querySelector(".card__like-count").textContent = res.likes.length;
+    })
+    .catch((err) => console.log(`Ошибка ${err}`));
 }
