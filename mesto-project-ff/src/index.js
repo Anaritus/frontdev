@@ -17,13 +17,13 @@ import "./styles/index.css";
 export const cardTemplate = document.querySelector("#card-template").content;
 
 const showImage = function (evt) {
-  const popupImage = document.querySelector(".popup__image");
   popupImage.src = evt.target.src;
   popupImage.alt = evt.target.alt;
+  popupCaption.textContent = evt.target.alt;
   openModal(popupBigImage);
 };
-const cardsContainer = document.querySelector(".places__list");
 
+const cardsContainer = document.querySelector(".places__list");
 const editButton = document.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const avatarButton = document.querySelector(".profile__image-edit-button");
@@ -31,6 +31,8 @@ const addButton = document.querySelector(".profile__add-button");
 const popupAddCard = document.querySelector(".popup_type_new-card");
 const popupAvatar = document.querySelector(".popup_type_avatar");
 const popupBigImage = document.querySelector(".popup_type_image");
+const popupImage = document.querySelector(".popup__image");
+const popupCaption = document.querySelector(".popup__caption");
 const profileConfig = {
   titleClass: ".profile__title",
   descriptionClass: ".profile__description",
@@ -49,11 +51,9 @@ const profileTitle = document.querySelector(profileConfig.titleClass);
 const profileDescription = document.querySelector(
   profileConfig.descriptionClass,
 );
+const profileImage = document.querySelector(profileConfig.avatarClass);
 
 function renderProfile(profile, config) {
-  const profileTitle = document.querySelector(config.titleClass);
-  const profileDescription = document.querySelector(config.descriptionClass);
-  const profileImage = document.querySelector(config.avatarClass);
   profileTitle.textContent = profile.name;
   profileDescription.textContent = profile.about;
   profileImage.style = `background-image: url(${profile.avatar});`;
@@ -61,10 +61,10 @@ function renderProfile(profile, config) {
 
 function renderInitial(config) {
   Promise.all([whoami(), fetchCards()])
-    .then((ress) => {
-      const profile = ress[0];
+    .then(([userData, cards]) => {
+      const profile = userData;
       renderProfile(profile, config);
-      const initialCards = ress[1];
+      const initialCards = cards;
       initialCards.forEach(function (card) {
         cardsContainer.append(
           createCard(card, formDelete, likeToggle, showImage, profile._id),
@@ -91,14 +91,13 @@ function renderLoading(evt, loading) {
 renderInitial(profileConfig);
 
 addButton.addEventListener("click", function () {
+  newCardTitle.textContent = "";
+  newCardLink.textContent = "";
+  clearValidation(formAdd, validationConfig);
   openModal(popupAddCard);
 });
 
 editButton.addEventListener("click", function () {
-  const inputTypeName = document.querySelector(".popup__input_type_name");
-  const inputTypeDescription = document.querySelector(
-    ".popup__input_type_description",
-  );
   inputTypeName.value = profileTitle.textContent;
   inputTypeDescription.value = profileDescription.textContent;
   clearValidation(formEditElement, validationConfig);
@@ -106,6 +105,8 @@ editButton.addEventListener("click", function () {
 });
 
 avatarButton.addEventListener("click", function () {
+  avatarLink.textContent = "";
+  clearValidation(formAvatar, validationConfig);
   openModal(popupAvatar);
 });
 
@@ -126,8 +127,10 @@ const formAdd = document.querySelector(".popup_type_new-card .popup__form");
 const formEditElement = document.querySelector(".popup_type_edit .popup__form"); // Воспользуйтесь методом querySelector()
 const formAvatar = document.querySelector(".popup_type_avatar .popup__form");
 const formDelete = document.querySelector(".popup_type_delete .popup__form");
-const nameInput = document.querySelector(".popup__input_type_name"); // Воспользуйтесь инструментом .querySelector()
-const jobInput = document.querySelector(".popup__input_type_description"); // Воспользуйтесь инструментом .querySelector()
+const inputTypeName = document.querySelector(".popup__input_type_name"); // Воспользуйтесь инструментом .querySelector()
+const inputTypeDescription = document.querySelector(
+  ".popup__input_type_description",
+); // Воспользуйтесь инструментом .querySelector()
 const newCardTitle = document.querySelector(".popup__input_type_card-name");
 const newCardLink = document.querySelector(".popup__input_type_url");
 const avatarLink = document.querySelector(".popup__input_type_avatar_url");
@@ -137,14 +140,16 @@ function handleFormEditSubmit(evt) {
 
   renderLoading(evt, true);
   updateProfile({
-    name: nameInput.value,
+    name: nameInputinputTypeName.value,
     about: jobInput.value,
   })
     .then((profile) => {
       renderProfile(profile, profileConfig);
-      nameInput.value = "";
+      nameInputinputTypeName.value = "";
       jobInput.value = "";
       closeModal(evt.target.closest(".popup"));
+    })
+    .finally(() => {
       renderLoading(evt, false);
     })
     .catch((err) => console.log(`Ошибка ${err}`));
@@ -174,7 +179,6 @@ function handleFormSubmitAdd(evt) {
       renderLoading(evt, false);
     })
     .catch((err) => console.log(`Ошибка ${err}`));
-  clearValidation(formAdd, validationConfig);
 }
 
 function handleFormSubmitAvatar(evt) {
@@ -194,16 +198,13 @@ function handleFormSubmitAvatar(evt) {
     .catch((err) => console.log(`Ошибка ${err}`));
 }
 
-function find_card(_id) {
-  const cards = document.querySelectorAll(".card");
-  return Array.from(cards).filter(
-    (card) => card.getAttribute("_id") === _id,
-  )[0];
+function findCard(_id) {
+  return document.querySelector(`[_id="${_id}"]`);
 }
 
 function handleFormSubmitDelete(evt) {
-  const card_id = evt.target.getAttribute("_id");
-  const cardElement = find_card(card_id);
+  const cardId = evt.target.getAttribute("_id");
+  const cardElement = findCard(cardId);
   evt.preventDefault();
   renderLoading(evt, true);
   deleteCard({
